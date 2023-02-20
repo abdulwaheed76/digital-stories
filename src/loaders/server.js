@@ -28,6 +28,7 @@ const initializeServer = (serverPort) => {
   backend.use(cors(corsOptionsDelegate));
   backend.use(bodyParser.json({ limit: "50mb" }));
   backend.use("/api/auth", api.user.userRouter);
+  backend.use("/api/story", api.story.storyRouter);
   connectWithMongoDB()
     .then(() => {
       backend.listen(serverPort);

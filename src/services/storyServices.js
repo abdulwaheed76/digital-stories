@@ -60,7 +60,7 @@ const getStoryById = async (req, res) => {
   }
   return res.status(400).json({ message: "Not Found" });
 };
-module.export = {
+module.exports = {
   createStory,
   updateStory,
   getMyStories,
