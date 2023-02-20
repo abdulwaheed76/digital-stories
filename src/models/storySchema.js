@@ -15,23 +15,10 @@ const storySchema = new Schema(
       type: String,
       require: true,
     },
-    postedBy: {
-      type: String,
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref:'User'
     },
-    vote: {
-      type: Number,
-    },
-    upVote: {
-      type: Number,
-    },
-    downVote: {
-      type: Number,
-    },
-    commentId: 
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Comment",
-      },
     
   },
   {

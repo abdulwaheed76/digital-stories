@@ -1,9 +1,13 @@
 "use strict";
 
 const { User } = require("./userSchema");
-const { Story } = require("./storySchema")
+const { Story } = require("./storySchema");
+const { Comment } = require("./commentSchema");
+const { Vote } = require("./voteSchema");
 
-
-exports.User = User;
-exports.Story = Story;
-
+module.exports = {
+  User,
+  Story,
+  Comment,
+  Vote,
+};

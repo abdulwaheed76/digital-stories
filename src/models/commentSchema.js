@@ -14,6 +14,10 @@ const commentSchema = new Schema(
     byUser: {
       type: String,
     },
+    storyId:{
+        type:Schema.Types.ObjectId,
+        ref:"Story"
+    }
   },
   {
     timestamps: true,
