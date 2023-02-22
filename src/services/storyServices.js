@@ -2,12 +2,13 @@ const { Story, User } = require("../models");
 const mongoose = require("mongoose");
 
 const createStory = async (req, res) => {
-  const { name, description, postedBy, userId } = req.body;
+  const { title, description,visibility, postedBy, userId } = req.body;
 
   const story = await Story.create({
     _id: mongoose.Types.ObjectId(),
-    name: name,
+    title: title,
     description: description,
+    visibility:visibility,
     postedby: postedBy,
     userId: userId,
   });

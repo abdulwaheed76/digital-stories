@@ -7,7 +7,7 @@ const storySchema = new Schema(
   {
     _id: Schema.Types.ObjectId,
 
-    name: {
+    title: {
       type: String,
       require: true,
     },
@@ -19,6 +19,12 @@ const storySchema = new Schema(
       type: Schema.Types.ObjectId,
       ref:'User'
     },
+    posterBy:{
+      type:String,
+    },
+    visibility:{
+      type:String
+    }
     
   },
   {
