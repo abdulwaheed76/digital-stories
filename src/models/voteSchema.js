@@ -15,10 +15,10 @@ const voteSchema = new Schema(
       ref:'User'
     },
     upVote: {
-      type: Number,
+      type: Boolean,
     },
     downVote: {
-      type: Number,
+      type: Boolean,
     },
   },
   {

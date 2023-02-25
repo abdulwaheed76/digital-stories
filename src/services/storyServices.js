@@ -1,23 +1,28 @@
-const { Story, User } = require("../models");
+"use strict";
+const { Story, User, Vote, Comment } = require("../models");
 const mongoose = require("mongoose");
 
 const createStory = async (req, res) => {
-  const { title, description,visibility, postedBy, userId } = req.body;
-
-  const story = await Story.create({
-    _id: mongoose.Types.ObjectId(),
-    title: title,
-    description: description,
-    visibility:visibility,
-    postedby: postedBy,
-    userId: userId,
-  });
-  if (story) {
-    return res.status(201).json({ message: "Story Created", story });
+  try {
+    const { title, imageUrl, description, visibility, postedBy, userId } =
+      req.body;
+    const story = await Story.create({
+      _id: mongoose.Types.ObjectId(),
+      title: title,
+      description: description,
+      visibility: visibility,
+      postedby: postedBy,
+      userId: userId,
+      imageUrl: imageUrl,
+    });
+    if (story) {
+      return res.status(201).json({ message: "Story Created", story });
+    }
+  } catch (err) {
+    console.error(err);
   }
   return res.status(500).json({ message: "Error while creating" });
 };
-
 const updateStory = async (req, res) => {
   const { name, description } = req.body;
   const { id } = req.params;
@@ -39,28 +44,78 @@ const updateStory = async (req, res) => {
 };
 
 const getMyStories = async (req, res) => {
-  const { id } = req.params;
-  const user = await User.findById(id).exec();
-  if (!user) {
-    return res.status(400).json({ message: "user not exist" });
+  try {
+    const { userId } = req.params;
+    const stories = await Story.find({ userId: userId }).exec();
+    const updatedStories = await Promise.all(
+      stories.map(async (story) => {
+        const vote = await Vote.find({ storyId: story.id }).exec();
+        const countUp = vote.filter((obj) => obj.upVote === true).length;
+        const countDown = vote.filter((obj) => obj.downVote === true).length;
+        const updateStory = {
+          ...story.toObject(),
+          upVote: countUp,
+          downVote: countDown,
+        };
+        return updateStory;
+      })
+    );
+    return res.status(200).json(updatedStories);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
   }
-  const stories = await Story.find({ userId: id }).exec();
-  return res.status(200).json(stories);
 };
 
 const getAllStory = async (req, res) => {
-  const stories = await Story.find({}).exec();
-  return res.status(200).json(stories);
+  try {
+    const stories = await Story.find({}).exec();
+    const updatedStories = await Promise.all(
+      stories.map(async (story) => {
+        const vote = await Vote.find({ storyId: story.id }).exec();
+        const countUp = vote.filter((obj) => obj.upVote === true).length;
+        const countDown = vote.filter((obj) => obj.downVote === true).length;
+        const updateStory = {
+          ...story.toObject(),
+          upVote: countUp,
+          downVote: countDown,
+        };
+        return updateStory;
+      })
+    );
+    return res.status(200).json(updatedStories);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
 };
 
 const getStoryById = async (req, res) => {
-  const { id } = req.params;
-  const story = await Story.findOne({ _id: id }).exec();
-  if (story) {
-    return res.status(200).json(story);
+  try {
+    const { id } = req.params;
+    const story = await Story.findOne({ _id: id }).populate("User").exec();
+    if (story) {
+      const vote = await Vote.find({ storyId: story.id }).exec();
+      const countUp = vote.filter((obj) => obj.upVote === true).length;
+      const countDown = vote.filter((obj) => obj.downVote === true).length;
+      const comment = await Comment.find({ storyId: story.id })
+        .populate("User")
+        .exec();
+      const updatedStory = {
+        ...story.toObject(),
+        upVote: countUp,
+        downVote: countDown,
+        comment: comment,
+      };
+      return res.status(200).json(updatedStory);
+    }
+    return res.status(400).json({ message: "Not Found" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
   }
-  return res.status(400).json({ message: "Not Found" });
 };
+
 module.exports = {
   createStory,
   updateStory,

@@ -19,13 +19,16 @@ const storySchema = new Schema(
       type: Schema.Types.ObjectId,
       ref:'User'
     },
+    imageUrl:{
+      type:String,
+
+    },
     posterBy:{
       type:String,
     },
     visibility:{
       type:String
-    }
-    
+    },
   },
   {
     timestamps: true,

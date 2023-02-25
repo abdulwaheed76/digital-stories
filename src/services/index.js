@@ -2,8 +2,10 @@
 
 const userServices = require("./userServices");
 const storyServices = require("./storyServices");
-const commentService = require("./commentService");
+const commentServices = require("./commentService");
+const voteServices = require("./voteServices");
 
 exports.userServices = userServices;
 exports.storyServices = storyServices;
-exports.commentService = commentService;
+exports.commentServices = commentServices;
+exports.voteServices = voteServices;

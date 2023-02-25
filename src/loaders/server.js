@@ -8,27 +8,30 @@ const { connectWithMongoDB } = require("./database");
 
 const initializeServer = (serverPort) => {
   const backend = express();
-  var whitelist = ['http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:8000',
-  ]
+  var whitelist = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:8000",
+  ];
   var corsOptionsDelegate = function (req, callback) {
     var corsOptions;
-    if (whitelist.indexOf(req.header('Origin')) !== -1) {
+    if (whitelist.indexOf(req.header("Origin")) !== -1) {
       corsOptions = {
         origin: true,
         credentials: true,
         exposedHeaders: ["set-cookie"],
-      } // reflect (enable) the requested origin in the CORS response
+      }; // reflect (enable) the requested origin in the CORS response
     } else {
-      corsOptions = { origin: false } // disable CORS for this request
+      corsOptions = { origin: false }; // disable CORS for this request
     }
-    callback(null, corsOptions) // callback expects two parameters: error and options
-  }
+    callback(null, corsOptions); // callback expects two parameters: error and options
+  };
   backend.use(cors(corsOptionsDelegate));
   backend.use(bodyParser.json({ limit: "50mb" }));
   backend.use("/api/auth", api.user.userRouter);
   backend.use("/api/story", api.story.storyRouter);
+  backend.use("/api/vote", api.vote.voteRouter);
+  backend.use("/api/comment", api.commnet.commentRouter);
   connectWithMongoDB()
     .then(() => {
       backend.listen(serverPort);
