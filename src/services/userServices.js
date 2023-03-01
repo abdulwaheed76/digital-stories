@@ -8,9 +8,8 @@ const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
   const userExit = await User.findOne({ email: email });
   if (userExit) {
-    return res.status(400).json({ message: "User already exist" });
+    return res.status(401).json({ message: "User already exist" });
   }
-  console.log(req.body);
   const encrypterPass = await bcrypt.hash(password, 10);
   const user = await User.create({
     _id: mongoose.Types.ObjectId(),
@@ -24,7 +23,7 @@ const registerUser = async (req, res) => {
       email,
     },
     config.authConfig.AUTH_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: "15h" }
   );
   user.token = token;
   return res.status(201).json({ user, token });
@@ -39,34 +38,35 @@ const loginUser = async (req, res) => {
     });
   }
   const user = await User.findOne({ email: email }).exec();
-  console.log(user);
   if (!user) {
     res.status(401).json({
-      message: "Login not successful",
+      message: "Incorrect Email or Password",
       error: "User not found",
     });
-  }
-  const result = await bcrypt.compare(password, user.password);
-  if (result) {
-    const payload = {
-      user_id: user._id,
-      email: user.email,
-    };
-    const token = jwt.sign(payload, config.authConfig.AUTH_SECRET, {
-      expiresIn: "15m",
-    });
-    const userLoged = {
-      name: user.name,
-      email: user.email,
-      token: token,
-    };
-    return res.status(200).json({
-      message: "Login successful",
-      userLoged,
-    });
-  }
+  } else {
+    const result = await bcrypt.compare(password, user.password);
+    if (result) {
+      const payload = {
+        user_id: user._id,
+        email: user.email,
+      };
+      const token = jwt.sign(payload, config.authConfig.AUTH_SECRET, {
+        expiresIn: "15m",
+      });
+      const userLoged = {
+        name: user.name,
+        email: user.email,
+        userId: user._id,
+        token: token,
+      };
+      return res.status(200).json({
+        message: "Login successful",
+        userLoged: userLoged,
+      });
+    }
 
-  return res.status(400).json({ message: "Login not succesful" });
+    return res.status(400).json({ message: "Login not succesful" });
+  }
 };
 module.exports = {
   registerUser,

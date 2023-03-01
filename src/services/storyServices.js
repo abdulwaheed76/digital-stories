@@ -93,19 +93,17 @@ const getAllStory = async (req, res) => {
 const getStoryById = async (req, res) => {
   try {
     const { id } = req.params;
-    const story = await Story.findOne({ _id: id }).populate("User").exec();
+    const story = await Story.findOne({ _id: id }).exec();
     if (story) {
-      const vote = await Vote.find({ storyId: story.id }).exec();
-      const countUp = vote.filter((obj) => obj.upVote === true).length;
-      const countDown = vote.filter((obj) => obj.downVote === true).length;
-      const comment = await Comment.find({ storyId: story.id })
-        .populate("User")
-        .exec();
+      // const vote = await Vote.find({ storyId: story.id }).exec();
+      // const countUp = vote.filter((obj) => obj.upVote === true).length;
+      // const countDown = vote.filter((obj) => obj.downVote === true).length;
+      const {name} = await User.findById(story.userId).exec();
+      // const comment = await Comment.find({ storyId: story.id }).exec();
+      console.log(name)
       const updatedStory = {
         ...story.toObject(),
-        upVote: countUp,
-        downVote: countDown,
-        comment: comment,
+        userName: name,
       };
       return res.status(200).json(updatedStory);
     }
