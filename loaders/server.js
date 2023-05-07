@@ -12,6 +12,7 @@ const initializeServer = (serverPort) => {
     "http://localhost:3000",
     "http://localhost:3001",
     "http://localhost:8000",
+    "https://digital-story-client.vercel.app"
   ];
   var corsOptionsDelegate = function (req, callback) {
     var corsOptions;
